@@ -8,7 +8,7 @@ class Cart
 
   attr_reader :contents
   attr_accessor :name
-  attr_reader: :quantities
+  # attr_reader: :quantities # Depreciated
 
   # def self.check_for(item)
   #   carts_containing_item = []
@@ -35,21 +35,27 @@ class Cart
   end
 
   def add(item, quantity = 1)
-    return 0 if quantity.to_i <= 0
+  # Add item(s) to cart.
+    return 0 if quantity.to_i <= 0 # Make sure quantity >= 1
     case item.class.to_s
     when "Product"
+      # if item is a Product, add it if possible.
       if (item.exists && item.available)
+        item.available = false  # reserve item
         @contents << item
         # if (@quantities[item.name] == nil)
         #   @quantities[item.name] = 1
         # else
         #   @quantities[item.name] += 1
         # end
-        item.available = false
+        return 1 # Number of items added
+      else
+        return 0
       end
-      return 1
     when "String"
+      # if item is a String, match it to the name.
       items = Product.find(item)
+      # Add as many as possible, up to quantity:
       num_added = 0
       i = 0
       while ((num_added < quantity) && (i < items.length))
@@ -64,13 +70,14 @@ class Cart
           num_added += 1
         end
       end
-      return num_added
+      return num_added  # Return the number added (may be < quantity)
     else
       return 0
     end
   end
 
   def quantity_of(name)
+  # find the quantity of items matching name in cart
     quantity = 0
     @contents.each { |item| quantity += 1 if item.name == name }
     quantity
@@ -84,7 +91,8 @@ class Cart
   end
 
   def remove_all(name)
-
+    items = Product.find(name)
+    items.each { |item| remove(item) }
   end
 
 end
