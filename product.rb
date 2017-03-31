@@ -35,7 +35,7 @@ class Product
     results # Return an array of products
   end
 
-  def self.exits(item)
+  def self.exists(item)
     # Simple check if item is in inventory
     @@inventory.include?(item)
   end

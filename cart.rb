@@ -40,7 +40,7 @@ class Cart
     case item.class.to_s
     when "Product"
       # if item is a Product, add it if possible.
-      if (item.exists && item.available)
+      if (Product.exists(item) && item.available)
         item.available = false  # reserve item
         @contents << item
         # if (@quantities[item.name] == nil)
@@ -69,6 +69,7 @@ class Cart
           items[i].available = false
           num_added += 1
         end
+        i += 1
       end
       return num_added  # Return the number added (may be < quantity)
     else
@@ -94,5 +95,23 @@ class Cart
     items = Product.find(name)
     items.each { |item| remove(item) }
   end
+
+  def subtotal
+    subtotal = 0
+    @contents.each { |item| subtotal += item.price }
+    subtotal
+  end
+
+  def total
+    total = 0
+    @contents.each { |item| subtotal += item.total_price }
+    total
+  end
+
+  def close_sale
+    @contents.each { |item| item.sell }
+    @contents = []
+  end
+
 
 end
