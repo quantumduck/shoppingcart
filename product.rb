@@ -28,29 +28,33 @@ class Product
   attr_reader :tax_rate
   # attr_reader price # redefined below
 
-  def initialize(name, price, tax_rate = :normal)
-    @name = name
-    case price.class.to_s
-    when "Integer"
-      @price_cents = 100 * price
-      puts "integer"
-    when"Float"
-      @price_cents = (100.0 * price.round(2)).to_i
-      puts "float"
-    else puts price.class
-    end
-    @tax_rate =
-    case tax_rate
-    when :untaxed
-      0
-    when :import
-      @@import_tax
+  def initialize(name, price, tax_rate = :normal, quantity = 1)
+    if (quantity.to_i <= 0)
+      return nil
     else
-      @@normal_tax
+      @name = name
+      case price.class.to_s
+      when "Integer"
+        @price_cents = 100 * price
+      when"Float"
+        @price_cents = (100.0 * price.round(2)).to_i
+      else puts price.class
+      end
+      @tax_rate =
+      case tax_rate
+      when :untaxed
+        0
+      when :import
+        @@import_tax
+      else
+        @@normal_tax
+      end
+      @serial = @@serial_count
+      @@serial_count += 1
+      @@inventory << self
+      quantity -= 1
+      Product.new(name, price, tax_rate, quantity)
     end
-    @serial = @@serial_count
-    @@serial_count += 1
-    @@inventory << self
   end
 
   def price
