@@ -11,7 +11,7 @@ class Product
     @@inventory.each do |product|
       case field
       when :name
-        results << product if product.name == value
+        results << product if (product.name == value)
       when :price
         case cmp
         when :equal
@@ -24,8 +24,13 @@ class Product
     results
   end
 
+  def self.exits(item)
+    @@inventory.include?(item)
+  end
+
   attr_reader :name
   attr_reader :tax_rate
+  attr_accessor :available
   # attr_reader price # redefined below
 
   def initialize(name, price, tax_rate = :normal, quantity = 1)
