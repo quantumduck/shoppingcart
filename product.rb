@@ -1,6 +1,7 @@
 class Product
 
   @@inventory = []
+  @@sales = []
   @@normal_tax = 15
   @@import_tax = 25
   @@serial_count = 0
@@ -23,13 +24,21 @@ class Product
     results
   end
 
-  attr_reader name
-  attr_reader price
-  attr_reader tax_rate
+  attr_reader :name
+  attr_reader :tax_rate
+  # attr_reader price # redefined below
 
-  def initizlize(name, price, tax_rate = :normal)
+  def initialize(name, price, tax_rate = :normal)
     @name = name
-    @price = price
+    case price.class.to_s
+    when "Integer"
+      @price_cents = 100 * price
+      puts "integer"
+    when"Float"
+      @price_cents = (100.0 * price.round(2)).to_i
+      puts "float"
+    else puts price.class
+    end
     @tax_rate =
     case tax_rate
     when :untaxed
@@ -42,6 +51,25 @@ class Product
     @serial = @@serial_count
     @@serial_count += 1
     @@inventory << self
+  end
+
+  def price
+    (@price_cents.to_f / 100.0).round(2)
+  end
+
+  def total_price
+    base = @price_cents
+    tax = ((base * @tax_rate).round(-2)) / 100
+    total = ((base + tax).to_f / 100.0).round(2)
+  end
+
+    def sell
+    sold =  @@inventory.include?(self)
+    if sold
+      @@sales << self
+      @@inventory.delete(self)
+    end
+    sold
   end
 
 end
