@@ -104,7 +104,7 @@ class Cart
 
   def total
     total = 0
-    @contents.each { |item| subtotal += item.total_price }
+    @contents.each { |item| total += item.total_price }
     total
   end
 
