@@ -16,9 +16,11 @@ class ProductsController < ApplicationController
       render :new
       return
     end
-    unless @product.price > 0
+    unless @product.price && @product.price > 0
       flash[:alert] = "No freebies!"
+      @product.price = nil # delete bad user set value if necessary
       render :new
+      return
     end
     # Set defaults
     unless @product.tax
@@ -26,6 +28,7 @@ class ProductsController < ApplicationController
     end
     # Set product to available
     @product.available!
+    redirect_to products_url
   end
 
 private
